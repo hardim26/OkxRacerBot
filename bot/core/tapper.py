@@ -111,7 +111,7 @@ class Tapper:
         except Exception as error:
             logger.error(f"<light-yellow>{self.session_name}</light-yellow> | Unknown error during Authorization: "
                          f"{error}")
-            await asyncio.sleep(delay=3)
+            await asyncio.sleep(delay=5)
 
     async def get_info_data(self, http_client: aiohttp.ClientSession):
         try:
@@ -130,7 +130,7 @@ class Tapper:
 
         except Exception as error:
             logger.error(f"{self.session_name} | Unknown error when getting user data: {error}")
-            await asyncio.sleep(delay=randint(3, 7))
+            await asyncio.sleep(delay=randint(7, 10))
 
     async def check_proxy(self, http_client: aiohttp.ClientSession, proxy: Proxy) -> None:
         try:
@@ -156,11 +156,11 @@ class Tapper:
                         logger.success(f"{self.session_name} | Task <lc>{task['context']['name']}</lc> completed! | "
                                        f"Reward: <e>+{task['points']}</e> points")
 
-                    await asyncio.sleep(delay=randint(5, 10))
+                    await asyncio.sleep(delay=randint(7, 10))
 
         except Exception as error:
             logger.error(f"{self.session_name} | Unknown error when completing tasks: {error}")
-            await asyncio.sleep(delay=3)
+            await asyncio.sleep(delay=6)
 
     async def perform_task(self, http_client: aiohttp.ClientSession, task_id: str):
         try:
@@ -220,20 +220,20 @@ class Tapper:
                 price = response_json['data'][0]['last']
                 return float(price)
             else:
-                await asyncio.sleep(delay=3)
+                await asyncio.sleep(delay=7)
                 return await self.get_price(http_client=http_client)
         except Exception as error:
             logger.error(f"{self.session_name} | Unknown error when getting price: {error}")
-            await asyncio.sleep(delay=3)
+            await asyncio.sleep(delay=6)
 
     async def make_assess(self, http_client: aiohttp.ClientSession):
         try:
             if settings.RANDOM_PREDICTION:
                 predict = randint(0, 1)
-                await asyncio.sleep(delay=randint(4, 6))
+                await asyncio.sleep(delay=randint(7, 8))
             else:
                 price = await self.get_price(http_client=http_client)
-                await asyncio.sleep(delay=3)
+                await asyncio.sleep(delay=5)
                 new_price = await self.get_price(http_client=http_client)
                 predict = 0 if price > new_price else 1
             json_data = {
@@ -267,7 +267,7 @@ class Tapper:
 
         except Exception as error:
             logger.error(f"{self.session_name} | Unknown error when making assess: {error}")
-            await asyncio.sleep(delay=3)
+            await asyncio.sleep(delay=5)
 
     async def run(self, proxy: str | None) -> None:
         access_token_created_time = 0
@@ -334,14 +334,14 @@ class Tapper:
                             if self.can_buy_boost(balance, boost):
                                 if await self.buy_boost(http_client=http_client, boost_id=boost['id'],
                                                         boost_name=boost['context']['name']):
-                                    await asyncio.sleep(randint(1, 3))
+                                    await asyncio.sleep(randint(6, 10))
                                     boosts = await self.get_boosts(http_client=http_client)
                                     sleep_time = randint(1, 3)
                                     continue
                             else:
                                 break
 
-                    await asyncio.sleep(delay=randint(1, 3))
+                    await asyncio.sleep(delay=randint(7, 10))
 
                 logger.info(f"{self.session_name} | Sleep <y>{sleep_time}</y> seconds")
                 await asyncio.sleep(delay=sleep_time)
@@ -350,7 +350,7 @@ class Tapper:
 
             except Exception as error:
                 logger.error(f"{self.session_name} | Unknown error: {error}")
-                await asyncio.sleep(delay=randint(60, 120))
+                await asyncio.sleep(delay=randint(90, 300))
 
 
 def get_link_code() -> str:
